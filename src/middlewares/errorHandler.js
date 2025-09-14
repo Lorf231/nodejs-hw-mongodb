@@ -2,7 +2,7 @@ import createHttpError from 'http-errors';
 
 const { HttpError } = createHttpError;
 
-export const errorHandler = (err, req, res) => {
+export const errorHandler = (err, req, res, _next) => {
   if (err instanceof HttpError) {
     res.status(err.status).json({
       status: err.status,
