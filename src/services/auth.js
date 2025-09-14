@@ -3,14 +3,15 @@ import jwt from 'jsonwebtoken';
 import createHttpError from 'http-errors';
 import { User } from '../models/userModel.js';
 import { Session } from '../models/sessionModel.js';
+import { sendMail } from '../utils/mailer.js';
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, APP_DOMAIN } = process.env;
 
 if (!JWT_SECRET) {
   console.warn('JWT_SECRET is not set. Please add it to your environment variables.');
 }
 
-const ACCESS_TTL_MS = 15 * 60 * 1000;
+const ACCESS_TTL_MS = 15 * 60 * 1000;   
 const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const registerUser = async ({ name, email, password }) => {
@@ -18,12 +19,10 @@ export const registerUser = async ({ name, email, password }) => {
   if (existingUser) return null;
 
   const hashedPassword = await bcrypt.hash(password, 10);
-
   const newUser = await User.create({ name, email, password: hashedPassword });
 
   const userObj = newUser.toObject();
   delete userObj.password;
-
   return userObj;
 };
 
@@ -44,7 +43,6 @@ export const loginUser = async ({ email, password }) => {
   const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '30d' });
 
   await Session.deleteMany({ userId: user._id });
-
   await Session.create({
     userId: user._id,
     accessToken,
@@ -103,13 +101,62 @@ export const logoutSession = async (refreshTokenFromCookie) => {
   if (!refreshTokenFromCookie) {
     throw createHttpError(401, 'Refresh token missing');
   }
-
   const session = await Session.findOne({ refreshToken: refreshTokenFromCookie });
-  if (!session) {
-    throw createHttpError(401, 'Session not found');
+  if (!session) throw createHttpError(401, 'Session not found');
+  await Session.deleteOne({ _id: session._id, refreshToken: refreshTokenFromCookie });
+  return true;
+};
+
+export const sendResetPasswordEmail = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
   }
 
-  await Session.deleteOne({ _id: session._id, refreshToken: refreshTokenFromCookie });
+  const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '5m' });
+
+  const resetUrl = `${APP_DOMAIN.replace(/\/$/, '')}/reset-password?token=${encodeURIComponent(token)}`;
+
+  try {
+    await sendMail({
+      to: email,
+      subject: 'Reset your password',
+      text: `Use this link to reset your password: ${resetUrl}`,
+      html: `
+        <p>Hello ${user.name || ''},</p>
+        <p>Click the link below to reset your password (valid for 5 minutes):</p>
+        <p><a href="${resetUrl}">${resetUrl}</a></p>
+      `,
+    });
+  } catch {
+    throw createHttpError(500, 'Failed to send the email, please try again later.');
+  }
+
+  return true;
+};
+
+export const resetPasswordWithToken = async ({ token, password }) => {
+  let payload;
+  try {
+    payload = jwt.verify(token, JWT_SECRET);
+  } catch {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const { email } = payload || {};
+  if (!email) {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
+
+  await Session.deleteMany({ userId: user._id });
 
   return true;
 };

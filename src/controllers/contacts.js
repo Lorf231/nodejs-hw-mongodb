@@ -6,6 +6,7 @@ import {
   patchContactById,
   deleteContactById,
 } from '../services/contacts.js';
+import { uploadImageBuffer } from '../utils/cloudinary.js';
 
 export const handleGetContacts = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
@@ -70,6 +71,16 @@ export const handleCreateContact = async (req, res) => {
     throw createHttpError(400, 'name, phoneNumber and contactType are required');
   }
 
+  // якщо прийшов файл — вантажимо на Cloudinary
+  if (req.file) {
+    try {
+      const { url } = await uploadImageBuffer(req.file.buffer, req.file.mimetype);
+      body.photo = url;
+    } catch {
+      throw createHttpError(500, 'Failed to upload image, please try again later.');
+    }
+  }
+
   const newContact = await createContact(userId, body);
 
   res.status(201).json({
@@ -83,11 +94,20 @@ export const handlePatchContact = async (req, res) => {
   const userId = req.user?._id || req.user?.id;
   const { contactId } = req.params;
 
-  if (!Object.keys(req.body || {}).length) {
+  if (!Object.keys(req.body || {}).length && !req.file) {
     throw createHttpError(400, 'Body must have at least one field');
   }
 
   const { userId: _ignored, ...body } = req.body;
+
+  if (req.file) {
+    try {
+      const { url } = await uploadImageBuffer(req.file.buffer, req.file.mimetype);
+      body.photo = url;
+    } catch {
+      throw createHttpError(500, 'Failed to upload image, please try again later.');
+    }
+  }
 
   const updated = await patchContactById(userId, contactId, body);
   if (!updated) throw createHttpError(404, 'Contact not found');

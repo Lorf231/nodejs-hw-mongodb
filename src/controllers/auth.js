@@ -1,9 +1,15 @@
 import createHttpError from 'http-errors';
-import { registerUser, loginUser, refreshSession, logoutSession } from '../services/auth.js';
+import {
+  registerUser,
+  loginUser,
+  refreshSession,
+  logoutSession,
+  sendResetPasswordEmail,
+  resetPasswordWithToken,
+} from '../services/auth.js';
 
 export const handleRegister = async (req, res) => {
   const { name, email, password } = req.body;
-
   const user = await registerUser({ name, email, password });
   if (!user) throw createHttpError(409, 'Email in use');
 
@@ -68,4 +74,27 @@ export const handleLogout = async (req, res) => {
   });
 
   res.status(204).send();
+};
+
+export const handleSendResetEmail = async (req, res) => {
+  const { email } = req.body;
+  await sendResetPasswordEmail(email);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
+};
+
+export const handleResetPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  await resetPasswordWithToken({ token, password });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
+  });
 };
