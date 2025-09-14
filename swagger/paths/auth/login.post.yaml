@@ -1,0 +1,51 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: Перевіряє email/пароль, створює сесію, повертає accessToken і встановлює refreshToken у cookies.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required: [email, password]
+        properties:
+          email:
+            type: string
+            format: email
+            example: 'alice@example.com'
+          password:
+            type: string
+            minLength: 6
+            example: 'qwerty123'
+responses:
+  '200':
+    description: Successfully logged in an user
+    headers:
+      Set-Cookie:
+        description: refreshToken HttpOnly cookie
+        schema:
+          type: string
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully logged in an user!'
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+  '401':
+    description: Email or password is wrong
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/Error.yaml

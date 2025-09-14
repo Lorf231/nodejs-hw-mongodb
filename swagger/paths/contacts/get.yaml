@@ -1,0 +1,90 @@
+tags:
+  - Contacts
+summary: Get contacts (paginated, sortable, filterable)
+operationId: getContacts
+description: |
+  Повертає список контактів поточного користувача з підтримкою пагінації, сортування та фільтрації.
+security:
+  - bearerAuth: []
+parameters:
+  - in: query
+    name: page
+    description: Номер сторінки (1..N)
+    schema:
+      type: integer
+      default: 1
+      minimum: 1
+  - in: query
+    name: perPage
+    description: Кількість елементів на сторінці
+    schema:
+      type: integer
+      default: 10
+      minimum: 1
+      maximum: 100
+  - in: query
+    name: sortBy
+    description: Поле для сортування
+    schema:
+      type: string
+      default: name
+      enum: [name, email, contactType, createdAt, updatedAt]
+  - in: query
+    name: sortOrder
+    description: Порядок сортування
+    schema:
+      type: string
+      default: asc
+      enum: [asc, desc]
+  - in: query
+    name: type
+    description: Фільтр за типом контакту
+    schema:
+      type: string
+      enum: [work, home, personal]
+  - in: query
+    name: isFavourite
+    description: Фільтр за обраністю
+    schema:
+      type: boolean
+responses:
+  '200':
+    description: Successfully found contacts
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully found contacts!'
+            data:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../../components/schemas/Contact.yaml
+                page:
+                  type: integer
+                  example: 2
+                perPage:
+                  type: integer
+                  example: 4
+                totalItems:
+                  type: integer
+                  example: 6
+                totalPages:
+                  type: integer
+                  example: 2
+                hasPreviousPage:
+                  type: boolean
+                  example: true
+                hasNextPage:
+                  type: boolean
+                  example: false
+  '401':
+    $ref: ../../components/responses/Unauthorized.yaml

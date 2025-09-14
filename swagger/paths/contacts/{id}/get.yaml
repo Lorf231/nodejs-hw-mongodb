@@ -1,0 +1,38 @@
+tags:
+  - Contacts
+summary: Get a contact by id
+operationId: getContactById
+description: |
+  Отримати детальну інформацію про конкретний контакт за його ідентифікатором.
+  Повертає об'єкт контакту, якщо він належить авторизованому користувачу.
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+    description: MongoDB ObjectId контакту
+responses:
+  '200':
+    description: Successfully found contact
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully found contact with id {id}!'
+            data:
+              $ref: ../../../components/schemas/Contact.yaml
+  '404':
+    description: Contact not found
+    content:
+      application/json:
+        schema:
+          $ref: ../../../components/schemas/Error.yaml

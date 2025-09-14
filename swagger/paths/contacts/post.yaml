@@ -1,0 +1,52 @@
+tags:
+  - Contacts
+summary: Create a contact
+operationId: createContact
+description: |
+  Створює новий контакт. Підтримує завантаження фото (Cloudinary) через multipart/form-data.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required: [name, phoneNumber, contactType]
+        properties:
+          name:
+            type: string
+            minLength: 3
+            maxLength: 20
+          phoneNumber:
+            type: string
+          email:
+            type: string
+          isFavourite:
+            type: boolean
+          contactType:
+            type: string
+            enum: [work, home, personal]
+          photo:
+            type: string
+            format: binary
+      encoding:
+        photo:
+          contentType: image/png, image/jpeg, image/webp, image/gif
+responses:
+  '201':
+    description: Successfully created a contact
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 201 }
+            message:
+              { type: string, example: 'Successfully created a contact!' }
+            data:
+              $ref: ../../components/schemas/Contact.yaml
+  '400':
+    $ref: ../../components/responses/ValidationError.yaml
+  '401':
+    $ref: ../../components/responses/Unauthorized.yaml
