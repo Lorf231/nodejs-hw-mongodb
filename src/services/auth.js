@@ -15,7 +15,7 @@ const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
-  if (existingUser) return null;
+  if (existingUser) throw createHttpError(409, 'Email in use');
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
