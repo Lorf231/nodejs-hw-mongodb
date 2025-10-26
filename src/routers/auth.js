@@ -2,7 +2,7 @@ import express from 'express';
 import { handleRegister, handleLogin, handleRefresh, handleLogout } from '../controllers/auth.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
-import { registerUserSchema, loginUserSchema } from '../schemas/authSchemas.js';
+import { registerUserSchema, loginUserSchema } from '../schemas/authSchema.js';
 
 const router = express.Router();
 
