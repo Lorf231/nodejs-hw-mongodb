@@ -67,7 +67,7 @@ responses:
                 data:
                   type: array
                   items:
-                    $ref: ../../components/schemas/Contact.yaml
+                    $ref: #/components/schemas/Contact.yaml
                 page:
                   type: integer
                   example: 2
@@ -87,4 +87,4 @@ responses:
                   type: boolean
                   example: false
   '401':
-    $ref: ../../components/responses/Unauthorized.yaml
+    $ref: #/components/responses/Unauthorized

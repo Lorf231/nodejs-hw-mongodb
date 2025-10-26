@@ -29,10 +29,10 @@ responses:
               type: string
               example: 'Successfully found contact with id {contactId}!'
             data:
-              $ref: ../../../components/schemas/Contact.yaml
+              $ref: #/components/schemas/Contact.yaml
   '404':
     description: Contact not found
     content:
       application/json:
         schema:
-          $ref: ../../../components/schemas/Error.yaml
+          $ref: #/components/schemas/Error.yaml

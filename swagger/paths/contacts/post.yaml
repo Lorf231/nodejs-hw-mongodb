@@ -50,8 +50,8 @@ responses:
             message:
               { type: string, example: 'Successfully created a contact!' }
             data:
-              $ref: ../../components/schemas/Contact.yaml
+              $ref: #/components/schemas/Contact.yaml
   '400':
-    $ref: ../../components/responses/ValidationError.yaml
+    $ref: #/components/responses/ValidationError.yaml
   '401':
-    $ref: ../../components/responses/Unauthorized.yaml
+    $ref: #/components/responses/Unauthorized.yaml
