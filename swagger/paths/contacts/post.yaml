@@ -18,15 +18,20 @@ requestBody:
             type: string
             minLength: 3
             maxLength: 20
+            example: John Doe
           phoneNumber:
             type: string
+            example: 0987654321
           email:
             type: string
-          isFavourite:
+            example: test@example.com
+          favorite:
             type: boolean
+            example: true
           contactType:
             type: string
             enum: [work, home, personal]
+            example: personal
           photo:
             type: string
             format: binary
