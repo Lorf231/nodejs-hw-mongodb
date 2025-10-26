@@ -50,5 +50,3 @@ export const updateContactById = async (userId, id, data) => {
 export const deleteContactById = async (userId, id) => {
   return Contact.findOneAndDelete({ _id: id, userId });
 };
-
-
