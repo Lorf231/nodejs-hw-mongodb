@@ -7,7 +7,7 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "Backend API for managing contacts with auth, email reset, and image uploads.\n"
+    "description": "Backend API for managing contacts with authentication, email reset, and image uploads.\n"
   },
   "servers": [
     {
@@ -15,8 +15,13 @@
       "description": "Local"
     },
     {
-      "url": "https://nodejs-hw-mongodb-4jdp.onrender.com",
+      "url": "https://nodejs-hw-mongodb-7-4y8v.onrender.com",
       "description": "Production (Render)"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
     }
   ],
   "tags": [
@@ -37,7 +42,7 @@
         ],
         "summary": "Get contacts (paginated, sortable, filterable)",
         "operationId": "getContacts",
-        "description": "Повертає список контактів поточного користувача з підтримкою пагінації, сортування та фільтрації.\n",
+        "description": "Повертає список контактів користувача з підтримкою пагінації, сортування та фільтрації.\n",
         "security": [
           {
             "bearerAuth": []
@@ -56,7 +61,7 @@
           },
           {
             "in": "query",
-            "name": "perPage",
+            "name": "limit",
             "description": "Кількість елементів на сторінці",
             "schema": {
               "type": "integer",
@@ -71,13 +76,11 @@
             "description": "Поле для сортування",
             "schema": {
               "type": "string",
-              "default": "name",
               "enum": [
                 "name",
                 "email",
                 "contactType",
-                "createdAt",
-                "updatedAt"
+                "createdAt"
               ]
             }
           },
@@ -87,16 +90,16 @@
             "description": "Порядок сортування",
             "schema": {
               "type": "string",
-              "default": "asc",
               "enum": [
                 "asc",
                 "desc"
-              ]
+              ],
+              "default": "asc"
             }
           },
           {
             "in": "query",
-            "name": "type",
+            "name": "contactType",
             "description": "Фільтр за типом контакту",
             "schema": {
               "type": "string",
@@ -110,7 +113,7 @@
           {
             "in": "query",
             "name": "isFavourite",
-            "description": "Фільтр за обраністю",
+            "description": "Фільтр за улюбленими",
             "schema": {
               "type": "boolean"
             }
@@ -122,51 +125,9 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully found contacts!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Contact"
-                          }
-                        },
-                        "page": {
-                          "type": "integer",
-                          "example": 2
-                        },
-                        "perPage": {
-                          "type": "integer",
-                          "example": 4
-                        },
-                        "totalItems": {
-                          "type": "integer",
-                          "example": 6
-                        },
-                        "totalPages": {
-                          "type": "integer",
-                          "example": 2
-                        },
-                        "hasPreviousPage": {
-                          "type": "boolean",
-                          "example": true
-                        },
-                        "hasNextPage": {
-                          "type": "boolean",
-                          "example": false
-                        }
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contact"
                   }
                 }
               }
@@ -270,14 +231,14 @@
         }
       }
     },
-    "/contacts/{id}": {
+    "/contacts/{contactId}": {
       "get": {
         "tags": [
           "Contacts"
         ],
-        "summary": "Get a contact by id",
+        "summary": "Get a contact by ID",
         "operationId": "getContactById",
-        "description": "Отримати детальну інформацію про конкретний контакт за його ідентифікатором.\nПовертає об'єкт контакту, якщо він належить авторизованому користувачу.\n",
+        "description": "Отримати детальну інформацію про конкретний контакт за його ідентифікатором.\n",
         "security": [
           {
             "bearerAuth": []
@@ -286,7 +247,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "contactId",
             "required": true,
             "schema": {
               "type": "string"
@@ -300,20 +261,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully found contact with id {id}!"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Contact"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Contact"
                 }
               }
             }
@@ -336,7 +284,7 @@
         ],
         "summary": "Patch a contact",
         "operationId": "patchContact",
-        "description": "Часткове оновлення контакту за id. Підтримує заміну фото (multipart/form-data).\n",
+        "description": "Часткове оновлення контакту за ID. Підтримує заміну фото (multipart/form-data).\n",
         "security": [
           {
             "bearerAuth": []
@@ -345,7 +293,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "contactId",
             "required": true,
             "schema": {
               "type": "string"
@@ -361,9 +309,7 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 20
+                    "type": "string"
                   },
                   "phoneNumber": {
                     "type": "string"
@@ -402,29 +348,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully patched a contact!"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Contact"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Contact"
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -437,7 +364,7 @@
         ],
         "summary": "Delete a contact",
         "operationId": "deleteContact",
-        "description": "Видаляє контакт за id, якщо він належить поточному користувачу.\n",
+        "description": "Видаляє контакт за ID, якщо він належить користувачу.\n",
         "security": [
           {
             "bearerAuth": []
@@ -446,20 +373,16 @@
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "contactId",
             "required": true,
             "schema": {
               "type": "string"
-            },
-            "description": "MongoDB ObjectId контакту"
+            }
           }
         ],
         "responses": {
           "204": {
             "description": "No Content"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -472,7 +395,8 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     },
     "schemas": {
@@ -495,12 +419,13 @@
             "type": "string",
             "example": "+123456789"
           },
-          "email": null,
-          "type": [
-            "string",
-            "null"
-          ],
-          "example": "alice@example.com",
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "alice@example.com"
+          },
           "isFavourite": {
             "type": "boolean",
             "example": false
@@ -549,13 +474,18 @@
             "type": "string",
             "example": "Something went wrong"
           },
-          "data": null,
-          "type": [
-            "string",
-            "null"
-          ],
-          "example": "Something went wrong"
-        }
+          "data": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Detailed error info"
+          }
+        },
+        "required": [
+          "status",
+          "message"
+        ]
       }
     },
     "responses": {
