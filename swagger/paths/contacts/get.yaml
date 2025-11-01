@@ -1,90 +1,59 @@
 tags:
   - Contacts
-summary: Get all contacts
+summary: Get contacts (paginated, sortable, filterable)
 operationId: getContacts
-description: Get all contacts of the current user with pagination and sorting.
+description: >
+  Повертає список контактів користувача з підтримкою пагінації, сортування та фільтрації.
 security:
   - bearerAuth: []
 parameters:
   - in: query
     name: page
+    description: Номер сторінки (1..N)
     schema:
       type: integer
+      default: 1
       minimum: 1
-      example: 1
-    description: Page number (default = 1)
   - in: query
-    name: perPage
+    name: limit
+    description: Кількість елементів на сторінці
     schema:
       type: integer
+      default: 10
       minimum: 1
-      maximum: 10
-      example: 10
-    description: Number of contacts per page (default = 10, max = 10)
+      maximum: 100
   - in: query
     name: sortBy
+    description: Поле для сортування
     schema:
       type: string
-      enum: [name, phoneNumber, contactType, createdAt]
-      example: name
-    description: Field to sort by
+      enum: [name, email, contactType, createdAt]
   - in: query
     name: sortOrder
+    description: Порядок сортування
     schema:
       type: string
       enum: [asc, desc]
-      example: asc
-    description: Sorting order (asc = ascending, desc = descending)
+      default: asc
+  - in: query
+    name: contactType
+    description: Фільтр за типом контакту
+    schema:
+      type: string
+      enum: [work, home, personal]
+  - in: query
+    name: isFavourite
+    description: Фільтр за улюбленими
+    schema:
+      type: boolean
 responses:
   '200':
     description: Successfully found contacts
     content:
       application/json:
         schema:
-          type: object
-          required:
-            - status
-            - message
-            - data
-          properties:
-            status:
-              type: integer
-              example: 200
-            message:
-              type: string
-              example: Successfully found contacts!
-            data:
-              type: object
-              required:
-                - data
-                - page
-                - perPage
-                - totalItems
-                - totalPages
-                - hasNextPage
-                - hasPreviousPage
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: #/components/schemas/contact.yaml
-                page:
-                  type: number
-                  example: 1
-                perPage:
-                  type: number
-                  example: 10
-                totalItems:
-                  type: number
-                  example: 42
-                totalPages:
-                  type: number
-                  example: 5
-                hasNextPage:
-                  type: boolean
-                  example: true
-                hasPreviousPage:
-                  type: boolean
-                  example: false
+          type: array
+          items:
+            $ref: ../../components/schemas/Contact.yaml
   '401':
-    $ref: #/components/responses/401.yaml
+    $ref: ../../components/responses/Unautorized.yaml

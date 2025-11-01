@@ -5,26 +5,25 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "build": "npm run build-docs",
     "build-docs": "redocly bundle docs/openapi.yaml --ext json -o docs/swagger.json",
-    "preview-docs": "redocly preview docs/openapi.yaml",
+    "preview-docs": "redocly preview-docs docs/openapi.yaml",
     "lint-docs": "redocly lint docs/openapi.yaml",
-    "postinstall": "npm run build-docs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "npm run build-docs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Lorf231/nodejs-hw-mongodb.git"
+    "url": "git+https://github.com/Daria0751/nodejs-hw-mongodb.git"
   },
   "keywords": [],
-  "author": "Roman Fliunt",
+  "author": "Дарʼя Каранда",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Lorf231/nodejs-hw-mongodb/issues"
+    "url": "https://github.com/Daria0751/nodejs-hw-mongodb/issues"
   },
-  "homepage": "https://github.com/Lorf231/nodejs-hw-mongodb#readme",
+  "homepage": "https://github.com/Daria0751/nodejs-hw-mongodb#readme",
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@redocly/cli": "^2.0.8",

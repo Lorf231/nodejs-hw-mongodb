@@ -1,12 +1,9 @@
-import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const swaggerDocument = YAML.load(path.join(__dirname, '../docs/openapi.yaml'));
+const swaggerPath = path.join(process.cwd(), 'docs', 'swagger.json');
+const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, 'utf8'));
 
 export const swaggerServe = swaggerUi.serve;
 export const swaggerSetup = swaggerUi.setup(swaggerDocument, {
