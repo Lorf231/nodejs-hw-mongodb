@@ -15,15 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Daria0751/nodejs-hw-mongodb.git"
+    "url": "git+https://github.com/Lorf231/nodejs-hw-mongodb.git"
   },
   "keywords": [],
-  "author": "Дарʼя Каранда",
+  "author": "Roman Fliunt",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Daria0751/nodejs-hw-mongodb/issues"
+    "url": "https://github.com/Lorf231/nodejs-hw-mongodb/issues"
   },
-  "homepage": "https://github.com/Daria0751/nodejs-hw-mongodb#readme",
+  "homepage": "https://github.com/Lorf231/nodejs-hw-mongodb#readme",
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@redocly/cli": "^2.0.8",
