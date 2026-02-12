@@ -2,8 +2,8 @@ tags:
   - Contacts
 summary: Get contacts (paginated, sortable, filterable)
 operationId: getContacts
-description: |
-  Повертає список контактів поточного користувача з підтримкою пагінації, сортування та фільтрації.
+description: >
+  Повертає список контактів користувача з підтримкою пагінації, сортування та фільтрації.
 security:
   - bearerAuth: []
 parameters:
@@ -15,7 +15,7 @@ parameters:
       default: 1
       minimum: 1
   - in: query
-    name: perPage
+    name: limit
     description: Кількість елементів на сторінці
     schema:
       type: integer
@@ -27,24 +27,23 @@ parameters:
     description: Поле для сортування
     schema:
       type: string
-      default: name
-      enum: [name, email, contactType, createdAt, updatedAt]
+      enum: [name, email, contactType, createdAt]
   - in: query
     name: sortOrder
     description: Порядок сортування
     schema:
       type: string
-      default: asc
       enum: [asc, desc]
+      default: asc
   - in: query
-    name: type
+    name: contactType
     description: Фільтр за типом контакту
     schema:
       type: string
       enum: [work, home, personal]
   - in: query
     name: isFavourite
-    description: Фільтр за обраністю
+    description: Фільтр за улюбленими
     schema:
       type: boolean
 responses:
@@ -53,38 +52,8 @@ responses:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 200
-            message:
-              type: string
-              example: 'Successfully found contacts!'
-            data:
-              type: object
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: ../../components/schemas/Contact.yaml
-                page:
-                  type: integer
-                  example: 2
-                perPage:
-                  type: integer
-                  example: 4
-                totalItems:
-                  type: integer
-                  example: 6
-                totalPages:
-                  type: integer
-                  example: 2
-                hasPreviousPage:
-                  type: boolean
-                  example: true
-                hasNextPage:
-                  type: boolean
-                  example: false
+          type: array
+          items:
+            $ref: ../../components/schemas/Contact.yaml
   '401':
-    $ref: ../../components/responses/Unauthorized.yaml
+    $ref: ../../components/responses/Unautorized.yaml

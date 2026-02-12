@@ -49,4 +49,4 @@ responses:
   '400':
     $ref: ../../components/responses/ValidationError.yaml
   '401':
-    $ref: ../../components/responses/Unauthorized.yaml
+    $ref: ../../components/responses/Unautorized.yaml

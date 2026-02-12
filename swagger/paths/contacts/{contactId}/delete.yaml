@@ -1,0 +1,19 @@
+tags:
+  - Contacts
+summary: Delete a contact
+operationId: deleteContact
+description: >
+  Видаляє контакт за ID, якщо він належить користувачу.
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: contactId
+    required: true
+    schema:
+      type: string
+responses:
+  '204':
+    description: No Content
+  '404':
+    $ref: ../../../components/responses/NotFound.yaml

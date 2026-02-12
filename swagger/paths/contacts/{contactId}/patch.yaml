@@ -2,15 +2,16 @@ tags:
   - Contacts
 summary: Patch a contact
 operationId: patchContact
-description: |
-  Часткове оновлення контакту за id. Підтримує заміну фото (multipart/form-data).
+description: >
+  Часткове оновлення контакту за ID. Підтримує заміну фото (multipart/form-data).
 security:
   - bearerAuth: []
 parameters:
   - in: path
-    name: id
+    name: contactId
     required: true
-    schema: { type: string }
+    schema:
+      type: string
     description: MongoDB ObjectId контакту
 requestBody:
   required: true
@@ -21,8 +22,6 @@ requestBody:
         properties:
           name:
             type: string
-            minLength: 3
-            maxLength: 20
           phoneNumber:
             type: string
           email:
@@ -44,16 +43,6 @@ responses:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            status: { type: integer, example: 200 }
-            message:
-              { type: string, example: 'Successfully patched a contact!' }
-            data:
-              $ref: ../../../components/schemas/Contact.yaml
-  '400':
-    $ref: ../../../components/responses/ValidationError.yaml
-  '401':
-    $ref: ../../../components/responses/Unauthorized.yaml
+          $ref: ../../../components/schemas/Contact.yaml
   '404':
     $ref: ../../../components/responses/NotFound.yaml

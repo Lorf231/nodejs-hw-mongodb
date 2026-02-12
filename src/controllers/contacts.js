@@ -71,7 +71,6 @@ export const handleCreateContact = async (req, res) => {
     throw createHttpError(400, 'name, phoneNumber and contactType are required');
   }
 
-  // якщо прийшов файл — вантажимо на Cloudinary
   if (req.file) {
     try {
       const { url } = await uploadImageBuffer(req.file.buffer, req.file.mimetype);
